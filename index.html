@@ -4,30 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ชื่อหน้าเว็บของคุณ</title>
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^3.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="output.css">
 </head>
 <body>
-    <header>
+    <header class="bg-green-500 text-white text-center p-4">
         <h1>ยินดีต้อนรับสู่หน้าเว็บของคุณ!</h1>
     </header>
-    <nav>
-        <ul>
-            <li><a href="#">หน้าแรก</a></li>
-            <li><a href="#">เกี่ยวกับเรา</a></li>
-            <li><a href="#">ติดต่อเรา</a></li>
+    <nav class="text-center my-4">
+        <ul class="list-none p-0">
+            <li class="inline-block mx-4"><a href="#" class="text-blue-500">หน้าแรก</a></li>
+            <li class="inline-block mx-4"><a href="#" class="text-blue-500">เกี่ยวกับเรา</a></li>
+            <li class="inline-block mx-4"><a href="#" class="text-blue-500">ติดต่อเรา</a></li>
         </ul>
     </nav>
-    <main>
-        <section>
-            <h2>หัวข้อที่หนึ่ง</h2>
+    <main class="p-4">
+        <section class="mb-4">
+            <h2 class="text-xl font-bold">หัวข้อที่หนึ่ง</h2>
             <p>เนื้อหาของหัวข้อที่หนึ่ง</p>
         </section>
-        <section>
-            <h2>หัวข้อที่สอง</h2>
+        <section class="mb-4">
+            <h2 class="text-xl font-bold">หัวข้อที่สอง</h2>
             <p>เนื้อหาของหัวข้อที่สอง</p>
         </section>
     </main>
-    <footer>
+    <footer class="bg-gray-800 text-white text-center p-4 fixed bottom-0 w-full">
         <p>© 2024 หน้าเว็บของคุณ. สงวนลิขสิทธิ์.</p>
     </footer>
 </body>
