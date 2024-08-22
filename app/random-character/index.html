@@ -200,18 +200,6 @@
                         ctx.fillText("Thailand Bitcoin Conference 2024", 10, canvasHeight - 14); // ข้อความทดสอบที่ด้านล่างสุด
                        
 
-                        // สุ่มข้อความ 6 หลัก (A-Z, a-z, 0-9)
-                        function generateRandomString(length) {
-                            const chars = '0123456789';
-                            let result = '';
-                            for (let i = 0; i < length; i++) {
-                                const randomIndex = Math.floor(Math.random() * chars.length);
-                                result += chars[randomIndex];
-                            }
-                            return result;
-                        }
-                        const randomString = generateRandomString(6);
-
                         // กำหนดวันที่ปัจจุบัน
                         const today = new Date();
                         const year = today.getFullYear();
@@ -221,7 +209,7 @@
 
                         // วาดข้อความที่ด้านล่างสุดด้านขวา
                         ctx.textAlign = "right";
-                        ctx.fillText(`${randomString} - #siamstr`, canvasWidth - 10, canvasHeight - 14); // ข้อความที่ด้านล่างขวา
+                        ctx.fillText(`#siamstr`, canvasWidth - 10, canvasHeight - 14); // ข้อความที่ด้านล่างขวา
 
                         const dataURL = canvas.toDataURL('image/png');
                         const downloadButton = $('<a>')
