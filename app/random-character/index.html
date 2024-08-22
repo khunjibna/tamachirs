@@ -94,107 +94,123 @@
             $('#exportBtn').prop('disabled', false);
         });
         $('#exportBtn').on('click', function () {
-            const images = $('#imageContainer img');
-            const numImages = images.length;
+    const images = $('#imageContainer img');
+    const numImages = images.length;
 
-            const numCols = numImages < 3 ? numImages : 3;
-            const numRows = Math.ceil(numImages / numCols);
+    const numCols = numImages < 3 ? numImages : 3;
+    const numRows = Math.ceil(numImages / numCols);
 
-            const canvasWidth = numCols * 240 + 60; // เพิ่มความกว้างของ canvas ขึ้น 60px สำหรับขอบซ้ายและขวา
-            const canvasHeight = numRows * 240 + 140; // ความสูงของ canvas ขึ้นกับจำนวนแถวและเพิ่มพื้นที่สำหรับคำถามและข้อความเล็ก ๆ
+    const canvasWidth = numCols * 240 + 60; // เพิ่มความกว้างของ canvas ขึ้น 60px สำหรับขอบซ้ายและขวา
+    const canvasHeight = numRows * 240 + 200; // เพิ่มความสูงเพื่อให้มีพื้นที่สำหรับข้อความ
 
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    const ctx = canvas.getContext('2d');
 
-            const questionText = "คุณอยากพาใครไปป้ายยาส้มเพื่อนของคุณ?";
-            const answerText = "และนี่คือคนที่คุณจะพาไปป้ายยาส้มเพื่อนของคุณ";
-            const textX = 54; // ตำแหน่งเริ่มต้นของข้อความ (ด้านซ้าย) เพิ่มจากขอบซ้าย 30px
-            const questionY = 50; // ตำแหน่ง Y ของคำถาม
-            const answerY = questionY + 30 + 12; // ตำแหน่ง Y ของคำตอบ (ห่างจากคำถาม 12px)
-            const imageStartY = answerY + 20; // ตำแหน่ง Y ของรูปภาพ (ห่างจากคำตอบ 16px)
+    // รับคำถามจาก input field
+    const questionText = $('#questionInput').val() || "คุณอยากพาใครไปป้ายยาส้มเพื่อนของคุณ?";
+    const answerText = "และนี่คือคนที่คุณ จะพาไปป้ายยาส้มเพื่อนของคุณ";
+    const textX = 54; // ตำแหน่งเริ่มต้นของข้อความ (ด้านซ้าย) เพิ่มจากขอบซ้าย 30px
+    const questionY = 50; // ตำแหน่ง Y ของคำถาม
+    const answerY = questionY + 30 + 12; // ตำแหน่ง Y ของคำตอบ (ห่างจากคำถาม 12px)
+    const imageStartY = answerY + 20 + 16; // ตำแหน่ง Y ของรูปภาพ (ห่างจากคำตอบ 16px)
 
-            const ctx = canvas.getContext('2d');
+    // 1. วาดพื้นหลังไล่สีม่วงและสีส้มที่พื้นหลังทั้งหมด (Layer3)
+    const gradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+    gradient.addColorStop(0, '#f39c12'); // สีส้ม
+    gradient.addColorStop(1, '#8e44ad'); // สีม่วง
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-            // 1. วาดพื้นหลังไล่สีม่วงและสีส้มที่พื้นหลังทั้งหมด (Layer3)
-            const gradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
-            gradient.addColorStop(0, '#f39c12'); // สีส้ม
-            gradient.addColorStop(1, '#8e44ad'); // สีม่วง
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    // 2. วาดพื้นหลังสีดำที่ความเข้ม 60% (Layer2)
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-            // 2. วาดพื้นหลังสีดำที่ความเข้ม 60% (Layer2)
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+   
 
+    // วาดคำถามและคำตอบด้านซ้าย
+    ctx.font = "30px Kanit";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "left";
+    ctx.fillText(questionText, textX, questionY);
 
-            // วาดคำถามและคำตอบด้านซ้าย
-            ctx.font = "30px Kanit"; // ใช้ฟอนต์ Kanit ขนาด 30px สำหรับคำถาม
-            ctx.fillStyle = "white";
-            ctx.textAlign = "left";
-            ctx.fillText(questionText, textX, questionY);
+    ctx.font = "20px Kanit";
+    ctx.fillText(answerText, textX, answerY);
 
-            ctx.font = "20px Kanit"; // ใช้ฟอนต์ Kanit ขนาด 20px สำหรับคำตอบ
-            ctx.fillText(answerText, textX, answerY);
+    // วาดกรอบโค้งมน
+    let imagesLoaded = 0;
 
-            // วาดกรอบโค้งมน
-            let imagesLoaded = 0;
+    images.each(function (index, img) {
+        img.onload = function () {
+            const col = index % numCols;
+            const row = Math.floor(index / numCols);
 
-            images.each(function (index, img) {
-                img.onload = function () {
-                    const col = index % numCols;
-                    const row = Math.floor(index / numCols);
+            let offsetX = 0;
+            if (row === numRows - 1 && numImages % numCols !== 0) {
+                offsetX = ((numCols - (numImages % numCols)) * 240) / 2;
+            }
 
-                    let offsetX = 0;
-                    if (row === numRows - 1 && numImages % numCols !== 0) {
-                        offsetX = ((numCols - (numImages % numCols)) * 240) / 2;
-                    }
+            const x = col * 240 + offsetX + 30;
+            const y = row * 240 + imageStartY;
+            const radius = 20;
 
-                    const x = col * 240 + offsetX + 30;
-                    const y = row * 240 + imageStartY;
-                    const radius = 20;
+            ctx.beginPath();
+            ctx.moveTo(x + radius + 10, y + 10);
+            ctx.lineTo(x + 220 - radius, y + 10);
+            ctx.quadraticCurveTo(x + 220 + 10, y + 10, x + 220 + 10, y + radius + 10);
+            ctx.lineTo(x + 220 + 10, y + 220 - radius);
+            ctx.quadraticCurveTo(x + 220 + 10, y + 220 + 10, x + 220 - radius, y + 220 + 10);
+            ctx.lineTo(x + radius + 10, y + 220 + 10);
+            ctx.quadraticCurveTo(x + 10, y + 220 + 10, x + 10, y + 220 - radius);
+            ctx.lineTo(x + 10, y + radius + 10);
+            ctx.quadraticCurveTo(x + 10, y + 10, x + radius + 10, y + 10);
+            ctx.closePath();
 
-                    ctx.beginPath();
-                    ctx.moveTo(x + radius + 10, y + 10);
-                    ctx.lineTo(x + 220 - radius, y + 10);
-                    ctx.quadraticCurveTo(x + 220 + 10, y + 10, x + 220 + 10, y + radius + 10);
-                    ctx.lineTo(x + 220 + 10, y + 220 - radius);
-                    ctx.quadraticCurveTo(x + 220 + 10, y + 220 + 10, x + 220 - radius, y + 220 + 10);
-                    ctx.lineTo(x + radius + 10, y + 220 + 10);
-                    ctx.quadraticCurveTo(x + 10, y + 220 + 10, x + 10, y + 220 - radius);
-                    ctx.lineTo(x + 10, y + radius + 10);
-                    ctx.quadraticCurveTo(x + 10, y + 10, x + radius + 10, y + 10);
-                    ctx.closePath();
+            const frameGradient = ctx.createLinearGradient(x, y, x + 220, y + 220);
+            frameGradient.addColorStop(0, '#f39c12');
+            frameGradient.addColorStop(1, '#8e44ad');
+            ctx.fillStyle = frameGradient;
+            ctx.fill();
 
-                    const frameGradient = ctx.createLinearGradient(x, y, x + 220, y + 220);
-                    frameGradient.addColorStop(0, '#f39c12');
-                    frameGradient.addColorStop(1, '#8e44ad');
-                    ctx.fillStyle = frameGradient;
-                    ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "white";
+            ctx.stroke();
 
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle = "white";
-                    ctx.stroke();
+            ctx.drawImage(img, x + 10, y + 10, 220, 220);
 
-                    ctx.drawImage(img, x + 10, y + 10, 220, 220);
+            imagesLoaded++;
+            if (imagesLoaded === numImages) {
+                // วาดพื้นหลังสีดำที่ด้านล่างสุด (Layer2)
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'; // สีดำ 70%
+                ctx.fillRect(0, canvasHeight - 40, canvasWidth, 40); // พื้นหลังสีดำที่ด้านล่างสุด
 
-                    imagesLoaded++;
-                    if (imagesLoaded === numImages) {
-                        const dataURL = canvas.toDataURL('image/png');
-                        const downloadButton = $('<a>')
-                            .attr('href', dataURL)
-                            .attr('download', 'random-images.png')
-                            .addClass('bg-yellow-500 text-black py-2 px-4 rounded mt-2 inline-block')
-                            .text('ดาวโหลดรูปภาพ');
+                // วาดข้อความที่ด้านล่างสุด
+                ctx.font = "16px Kanit";
+                ctx.fillStyle = "white";
+                ctx.textAlign = "left";
+                ctx.fillText("Thailand Bitcoin Conference 2024", 10, canvasHeight - 14); // ข้อความทดสอบที่ด้านล่างสุด
 
-                        $('#downloadContainer').empty().append(downloadButton);
-                    }
-                };
+                 // วาดข้อความที่ด้านล่างสุดด้านขวา
+                ctx.textAlign = "right";
+                ctx.fillText("#siamstr", canvasWidth - 10, canvasHeight - 14);
 
-                if (img.complete) {
-                    img.onload();
-                }
-            });
-        });
+                const dataURL = canvas.toDataURL('image/png');
+                const downloadButton = $('<a>')
+                    .attr('href', dataURL)
+                    .attr('download', 'random-images.png')
+                    .addClass('bg-yellow-500 text-black py-2 px-4 rounded mt-2 inline-block')
+                    .text('ดาวโหลดภาพ');
+
+                $('#downloadContainer').empty().append(downloadButton);
+            }
+        };
+
+        if (img.complete) {
+            img.onload();
+        }
+    });
+});
     </script>
 
 </body>
