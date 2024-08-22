@@ -1,1 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Image Selector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Kanit', sans-serif;
+        background: linear-gradient(90deg, #8e44ad, #f39c12);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        color: white;
+        overflow-y: scroll;
+    }
+
+    .navbar {
+        background-color: rgba(0, 0, 0, 0.8);
+        width: 100%;
+        padding: 15px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .container {
+        background-color: rgba(0, 0, 0, 0.7);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        width: 90%;
+        max-width: 800px;
+        margin-bottom: 100px;
+        position: relative;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .image-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        /* จัดภาพให้อยู่ตรงกลางตามแนวนอน */
+        flex-wrap: wrap;
+        /* ให้ภาพแสดงผลต่อกันในแถวใหม่ถ้าขนาดหน้าจอเล็ก */
+        gap: 10px;
+        /* เพิ่มช่องว่างระหว่างภาพ */
+    }
+
+    .image-container img {
+        border-radius: 15px;
+        /* ทำให้กรอบรูปภาพมีขอบมน */
+        background: linear-gradient(45deg, #f39c12, #8e44ad);
+        /* พื้นหลังไล่สีจากส้มไปม่วง */
+        padding: 10px;
+        /* เพิ่มช่องว่างระหว่างรูปภาพและขอบเพื่อให้เห็นพื้นหลังชัดเจน */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        /* เพิ่มเงาเพื่อความสวยงาม */
+    }
+
+    #randomizeBtn {
+        flex-grow: 1;
+    }
+
+    #exportBtn {
+        flex-grow: 1;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="#" class="mr-4 text-white hover:text-black">Home</a>
+        <a href="#" class="mr-4 text-white hover:text-black">Features</a>
+        <a href="#" class="mr-4 text-white hover:text-black">Pricing</a>
+        <a href="#" class="mr-4 text-white hover:text-black">Contact</a>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- คำถามที่เพิ่มขึ้น -->
+        <h2 class="text-2xl font-bold mb-4">คุณอยากพาใครไปป้ายยาส้มเพื่อนของคุณ?</h2>
+
+        <!-- ปุ่มสุ่ม และปุ่มบันทึกให้อยู่ในแถวเดียวกัน -->
+        <div class="button-container">
+            <button id="randomizeBtn"
+                class="bg-blue-500 text-white py-2 px-4 rounded">สุ่มบุคคลที่จะอยากให้ไปป้ายยา</button>
+            <button id="exportBtn" class="bg-green-500 text-white py-2 px-4 rounded"
+                disabled>บันทึกรูปภาพเพื่อแชร์</button>
+        </div>
+
+        <!-- กล่องสำหรับแสดงภาพที่สุ่ม -->
+        <div id="imageContainer"
+            class="image-container grid gap-4 mt-4 mb-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 justify-center"></div>
+
+        <!-- ซ่อน canvas สำหรับรวมภาพ -->
+        <canvas id="canvas" style="display: none;"></canvas>
+
+        <!-- กล่องสำหรับดาวน์โหลด -->
+        <div id="downloadContainer" class="mt-2"></div>
+    </div>
+
+    <script>
+        const imageUrls = [];
+
+        for (let i = 1; i <= 123; i++) {
+            const imageName = 'output_folder/' + i.toString().padStart(3, '0') + '.webp';
+            imageUrls.push(imageName);
+        }
+
+        const imageContainer = $('#imageContainer');
+        const canvas = $('#canvas')[0]; // เข้าถึง canvas อย่างถูกต้อง
+        const ctx = canvas.getContext('2d');
+
+        $('#randomizeBtn').on('click', function () {
+            imageContainer.empty();
+            $('#downloadContainer').empty(); // Clear previous download button
+            const selectedImages = [];
+
+            while (selectedImages.length < 5) {
+                const randomIndex = Math.floor(Math.random() * imageUrls.length);
+                if (!selectedImages.includes(imageUrls[randomIndex])) {
+                    selectedImages.push(imageUrls[randomIndex]);
+                }
+            }
+
+            selectedImages.forEach(url => {
+                const img = $('<img>')
+                    .attr('src', url)
+                    .addClass('border rounded-lg') // เพิ่มคลาสสำหรับขอบมนและพื้นหลังไล่สี
+                    .css({
+                        width: '100%',
+                        height: 'auto',
+                        maxWidth: '240px',
+                        background: 'linear-gradient(45deg, #f39c12, #8e44ad)', // ไล่สีจากส้มไปม่วง
+                        padding: '10px', // ช่องว่างระหว่างรูปภาพและขอบ
+                    });
+                imageContainer.append(img);
+            });
+
+            $('#exportBtn').prop('disabled', false);
+        });
+        $('#exportBtn').on('click', function () {
+            const images = $('#imageContainer img');
+            const numImages = images.length;
+
+            const numCols = numImages < 3 ? numImages : 3;
+            const numRows = Math.ceil(numImages / numCols);
+
+            const canvasWidth = numCols * 240 + 60; // เพิ่มความกว้างของ canvas ขึ้น 60px สำหรับขอบซ้ายและขวา
+            const canvasHeight = numRows * 240 + 140; // ความสูงของ canvas ขึ้นกับจำนวนแถวและเพิ่มพื้นที่สำหรับคำถามและข้อความเล็ก ๆ
+
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+
+            const questionText = "คุณอยากพาใครไปป้ายยาส้มเพื่อนของคุณ?";
+            const answerText = "และนี่คือคนที่คุณจะพาไปป้ายยาส้มเพื่อนของคุณ";
+            const textX = 54; // ตำแหน่งเริ่มต้นของข้อความ (ด้านซ้าย) เพิ่มจากขอบซ้าย 30px
+            const questionY = 50; // ตำแหน่ง Y ของคำถาม
+            const answerY = questionY + 30 + 12; // ตำแหน่ง Y ของคำตอบ (ห่างจากคำถาม 12px)
+            const imageStartY = answerY + 20; // ตำแหน่ง Y ของรูปภาพ (ห่างจากคำตอบ 16px)
+
+            const ctx = canvas.getContext('2d');
+
+            // 1. วาดพื้นหลังไล่สีม่วงและสีส้มที่พื้นหลังทั้งหมด (Layer3)
+            const gradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+            gradient.addColorStop(0, '#f39c12'); // สีส้ม
+            gradient.addColorStop(1, '#8e44ad'); // สีม่วง
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            // 2. วาดพื้นหลังสีดำที่ความเข้ม 60% (Layer2)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+
+            // วาดคำถามและคำตอบด้านซ้าย
+            ctx.font = "30px Kanit"; // ใช้ฟอนต์ Kanit ขนาด 30px สำหรับคำถาม
+            ctx.fillStyle = "white";
+            ctx.textAlign = "left";
+            ctx.fillText(questionText, textX, questionY);
+
+            ctx.font = "20px Kanit"; // ใช้ฟอนต์ Kanit ขนาด 20px สำหรับคำตอบ
+            ctx.fillText(answerText, textX, answerY);
+
+            // วาดกรอบโค้งมน
+            let imagesLoaded = 0;
+
+            images.each(function (index, img) {
+                img.onload = function () {
+                    const col = index % numCols;
+                    const row = Math.floor(index / numCols);
+
+                    let offsetX = 0;
+                    if (row === numRows - 1 && numImages % numCols !== 0) {
+                        offsetX = ((numCols - (numImages % numCols)) * 240) / 2;
+                    }
+
+                    const x = col * 240 + offsetX + 30;
+                    const y = row * 240 + imageStartY;
+                    const radius = 20;
+
+                    ctx.beginPath();
+                    ctx.moveTo(x + radius + 10, y + 10);
+                    ctx.lineTo(x + 220 - radius, y + 10);
+                    ctx.quadraticCurveTo(x + 220 + 10, y + 10, x + 220 + 10, y + radius + 10);
+                    ctx.lineTo(x + 220 + 10, y + 220 - radius);
+                    ctx.quadraticCurveTo(x + 220 + 10, y + 220 + 10, x + 220 - radius, y + 220 + 10);
+                    ctx.lineTo(x + radius + 10, y + 220 + 10);
+                    ctx.quadraticCurveTo(x + 10, y + 220 + 10, x + 10, y + 220 - radius);
+                    ctx.lineTo(x + 10, y + radius + 10);
+                    ctx.quadraticCurveTo(x + 10, y + 10, x + radius + 10, y + 10);
+                    ctx.closePath();
+
+                    const frameGradient = ctx.createLinearGradient(x, y, x + 220, y + 220);
+                    frameGradient.addColorStop(0, '#f39c12');
+                    frameGradient.addColorStop(1, '#8e44ad');
+                    ctx.fillStyle = frameGradient;
+                    ctx.fill();
+
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = "white";
+                    ctx.stroke();
+
+                    ctx.drawImage(img, x + 10, y + 10, 220, 220);
+
+                    imagesLoaded++;
+                    if (imagesLoaded === numImages) {
+                        const dataURL = canvas.toDataURL('image/png');
+                        const downloadButton = $('<a>')
+                            .attr('href', dataURL)
+                            .attr('download', 'random-images.png')
+                            .addClass('bg-yellow-500 text-black py-2 px-4 rounded mt-2 inline-block')
+                            .text('Download Combined Image');
+
+                        $('#downloadContainer').empty().append(downloadButton);
+                    }
+                };
+
+                if (img.complete) {
+                    img.onload();
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
