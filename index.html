@@ -3,97 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nostr Profile</title>
+    <title>Tamachirs.com</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- เพิ่มฟอนต์ภาษาไทยจาก Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-        }
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #444;
-        }
-        nav a {
-            color: white;
-            padding: 14px 20px;
-            text-decoration: none;
-            text-align: center;
-        }
-        nav a:hover {
-            background-color: #555;
-        }
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        .profile-picture {
-            display: block;
-            margin: 0 auto;
-            border-radius: 50%;
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-        }
-        .profile-info {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .profile-links {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .profile-links a {
-            padding: 10px 20px;
-            text-decoration: none;
-            color: white;
-            background-color: #333;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .profile-links a:hover {
-            background-color: #555;
+            font-family: 'Sarabun', sans-serif;
         }
     </style>
 </head>
-<body>
-    <header>
-        <h1>Tamachirs.com</h1>
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- เมนูส่วนหัว -->
+    <header class="bg-gray-800 text-white">
+        <div class="container mx-auto flex justify-between items-center p-4">
+            <div class="text-xl font-bold">Tamachirs.com</div>
+            <div class="lg:hidden">
+                <button id="menu-toggle" class="focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+            <nav id="menu" class="hidden lg:flex space-x-4">
+                <a href="#home" class="hover:bg-gray-700 px-3 py-2 rounded">Home</a>
+                <a href="#about" class="hover:bg-gray-700 px-3 py-2 rounded">About</a>
+            </nav>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden">
+            <nav class="px-4 pt-2 pb-4 space-y-2">
+                <a href="#home" class="block px-3 py-2 rounded bg-gray-700">Home</a>
+                <a href="#about" class="block px-3 py-2 rounded bg-gray-700">About</a>
+            </nav>
+        </div>
     </header>
 
-    <nav>
-        <a href="#profile">Profile</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-    </nav>
+    <div class="container mx-auto mt-8 flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4 flex-grow">
+        <!-- โปรไฟล์ด้านซ้าย (4 ส่วนในหน้าจอใหญ่, 1 ส่วนในหน้าจอเล็ก) -->
+        <div class="lg:w-1/3 xl:w-1/4 bg-white p-6 rounded-lg shadow-lg">
+            <div class="text-center">
+                <img id="profile-picture" class="mx-auto rounded-full w-32 h-32 object-cover" src="" alt="Profile Picture">
+                <h2 id="profile-name" class="text-xl font-semibold mt-4">ชื่อ</h2>
+                <p id="profile-about" class="text-gray-600 mt-2">เกี่ยวกับ</p>
 
-    <div class="container">
-        <div class="profile-info">
-            <img id="profile-picture" class="profile-picture" src="" alt="Profile Picture">
-            <h2 id="profile-name">Name</h2>
-            <p id="profile-about">About</p>
-            
-            <!-- ปุ่มลิงก์ด้านล่างรูปโปรไฟล์ -->
-            <div class="profile-links">
-                <a href="https://tamachirs.com/app/random-character/" target="_blank">Random Character</a>
+                <!-- ลิงก์ Follow -->
+                <div class="mt-6">
+                    <a href="https://nostrudel.ninja/#/u/npub1p7w6gyufuy3e6fnugvg9an7fyfes085qct2tp8sarctjwqdaqltsg47tzy" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600">Follow</a>
+                    <a href="https://github.com/khunjibna/tamachirs" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600">Github</a>
+                </div>
+
+                <!-- เส้นแบ่ง -->
+                <hr class="my-6">
+
+                <!-- ปุ่มเต็มขนาดสำหรับ 3 ลิงก์ -->
+                <div class="space-y-4">
+                    <div class="font-bold">มินิเกม</div>
+                    <a href="https://tamachirs.com/app/random-character/" target="_blank" class="block bg-gray-800 text-white text-center py-3 rounded hover:bg-gray-600">คุณอยากพาใครไปป้ายยาส้มเพื่อนของคุณ?</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- บทความด้านขวา (8 ส่วนในหน้าจอใหญ่, 1 ส่วนในหน้าจอเล็ก) -->
+        <div class="lg:w-2/3 xl:w-3/4">
+            <h2 class="text-xl font-semibold mb-4">บทความ</h2>
+            <div id="articles" class="space-y-6">
+                <!-- บทความจะปรากฏที่นี่ -->
+            </div>
+            <!-- ปุ่มแบ่งหน้า -->
+            <div id="pagination" class="flex justify-center space-x-2 mt-6">
+                <!-- ปุ่มหน้า 1, 2, 3 -->
             </div>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center p-4 mt-8">
+        <p>© 2024 tamachirs.com All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Toggle mobile menu
+        const menuToggle = document.getElementById('menu-toggle');
+        const menu = document.getElementById('menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
